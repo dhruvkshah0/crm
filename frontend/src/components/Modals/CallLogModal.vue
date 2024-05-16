@@ -54,21 +54,16 @@
               ></audio>
             </div>
             <div
-              class="w-full cursor-pointer rounded border px-2 pt-1.5 text-base text-gray-700"
+              class="max-h-30 min-h-16 w-full cursor-pointer overflow-hidden rounded border px-2 py-1.5 text-base text-gray-700"
               v-else-if="field.name == 'note'"
               @click="() => (showNoteModal = true)"
             >
-              <FadedScrollableDiv class="max-h-24 min-h-16 overflow-y-auto">
-                <div
-                  v-if="field.value?.title"
-                  :class="[field.value?.content ? 'mb-1 font-bold' : '']"
-                  v-html="field.value?.title"
-                />
-                <div
-                  v-if="field.value?.content"
-                  v-html="field.value?.content"
-                />
-              </FadedScrollableDiv>
+              <div
+                v-if="field.value?.title"
+                :class="[field.value?.content ? 'mb-1 font-bold' : '']"
+                v-html="field.value?.title"
+              />
+              <div v-if="field.value?.content" v-html="field.value?.content" />
             </div>
             <div v-else :class="field.color ? `text-${field.color}-600` : ''">
               {{ field.value }}
@@ -108,14 +103,7 @@ import CalendarIcon from '@/components/Icons/CalendarIcon.vue'
 import NoteIcon from '@/components/Icons/NoteIcon.vue'
 import CheckCircleIcon from '@/components/Icons/CheckCircleIcon.vue'
 import NoteModal from '@/components/Modals/NoteModal.vue'
-import FadedScrollableDiv from '@/components/FadedScrollableDiv.vue'
-import {
-  FeatherIcon,
-  Avatar,
-  Tooltip,
-  createDocumentResource,
-  call,
-} from 'frappe-ui'
+import { FeatherIcon, Avatar, Tooltip, createDocumentResource, call } from 'frappe-ui'
 import { ref, computed, h, watch } from 'vue'
 import { useRouter } from 'vue-router'
 

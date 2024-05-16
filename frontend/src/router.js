@@ -20,6 +20,19 @@ const routes = [
     component: () => import('@/pages/Lead.vue'),
     props: true,
   },
+
+  {
+    path: '/lenders',
+    name: 'Lenders',
+    component: () => import('@/pages/Lenders.vue'),
+    meta: { scrollPos: { top: 0, left: 0 } },
+  },
+  {
+    path: '/application',
+    name: 'Application',
+    component: () => import('@/pages/Application.vue'),
+    meta: { scrollPos: { top: 0, left: 0 } },
+  },
   {
     path: '/deals',
     name: 'Deals',

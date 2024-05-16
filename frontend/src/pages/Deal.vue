@@ -45,28 +45,27 @@
         v-model="deal"
       />
     </Tabs>
-    <Resizer side="right" class="flex flex-col justify-between border-l">
+    <div class="flex w-[352px] flex-col justify-between border-l">
       <div
-        class="flex h-10.5 cursor-copy items-center border-b px-5 py-2.5 text-lg font-medium"
-        @click="copyToClipboard(deal.data.name)"
+        class="flex h-10.5 items-center border-b px-5 py-2.5 text-lg font-semibold"
       >
-        {{ __(deal.data.name) }}
+        {{ __('About this Deal') }}
       </div>
       <div class="flex items-center justify-start gap-5 border-b p-5">
         <Tooltip :text="__('Organization logo')">
-          <div class="group relative size-12">
+          <div class="group relative h-[88px] w-[88px]">
             <Avatar
               size="3xl"
-              class="size-12"
-              :label="organization?.name || __('Untitled')"
+              class="h-[88px] w-[88px]"
+              :label="organization?.name"
               :image="organization?.organization_logo"
             />
           </div>
         </Tooltip>
         <div class="flex flex-col gap-2.5 truncate">
-          <Tooltip :text="organization?.name || __('Set an organization')">
+          <Tooltip :text="organization?.name">
             <div class="truncate text-2xl font-medium">
-              {{ organization?.name || __('Untitled') }}
+              {{ organization?.name }}
             </div>
           </Tooltip>
           <div class="flex gap-1.5">
@@ -139,10 +138,13 @@
                     <template #target="{ togglePopover }">
                       <Button
                         class="h-7 px-3"
-                        variant="ghost"
-                        icon="plus"
+                        :label="__('Add Contact')"
                         @click="togglePopover()"
-                      />
+                      >
+                        <template #prefix>
+                          <FeatherIcon name="plus" class="h-4" />
+                        </template>
+                      </Button>
                     </template>
                   </Link>
                 </div>
@@ -199,11 +201,12 @@
                           </div>
                           <div class="flex items-center">
                             <Dropdown :options="contactOptions(contact.name)">
-                              <Button
-                                icon="more-horizontal"
-                                class="text-gray-600"
-                                variant="ghost"
-                              />
+                              <Button variant="ghost">
+                                <FeatherIcon
+                                  name="more-horizontal"
+                                  class="h-4 text-gray-600"
+                                />
+                              </Button>
                             </Dropdown>
                             <Button
                               variant="ghost"
@@ -256,7 +259,7 @@
           </div>
         </div>
       </div>
-    </Resizer>
+    </div>
   </div>
   <OrganizationModal
     v-model="showOrganizationModal"
@@ -285,7 +288,6 @@
   />
 </template>
 <script setup>
-import Resizer from '@/components/Resizer.vue'
 import LoadingIndicator from '@/components/Icons/LoadingIndicator.vue'
 import ActivityIcon from '@/components/Icons/ActivityIcon.vue'
 import EmailIcon from '@/components/Icons/EmailIcon.vue'
@@ -314,7 +316,6 @@ import {
   setupAssignees,
   setupCustomActions,
   errorMessage,
-  copyToClipboard,
 } from '@/utils'
 import { globalStore } from '@/stores/global'
 import { organizationsStore } from '@/stores/organizations'
@@ -428,7 +429,7 @@ function validateRequired(fieldname, value) {
 const breadcrumbs = computed(() => {
   let items = [{ label: __('Deals'), route: { name: 'Deals' } }]
   items.push({
-    label: organization.value?.name || __('Untitled'),
+    label: organization.value?.name,
     route: { name: 'Deal', params: { dealId: deal.data.name } },
   })
   return items

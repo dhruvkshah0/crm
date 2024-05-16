@@ -1,7 +1,7 @@
 <template>
   <div
     class="relative flex h-full flex-col justify-between transition-all duration-300 ease-in-out"
-    :class="isSidebarCollapsed ? 'w-12' : 'w-[220px]'"
+    :class="isSidebarCollapsed ? 'w-12' : 'w-56'"
   >
     <div>
       <UserDropdown class="p-2" :isCollapsed="isSidebarCollapsed" />
@@ -58,7 +58,9 @@
                 class="h-4 text-gray-900 transition-all duration-300 ease-in-out"
                 :class="{ 'rotate-90': opened }"
               />
-              <span>{{ __(view.name) }}</span>
+              <span class="uppercase">
+                {{ __(view.name) }}
+              </span>
             </div>
           </template>
           <nav class="flex flex-col">
@@ -127,6 +129,17 @@ const links = [
     label: 'Leads',
     icon: LeadsIcon,
     to: 'Leads',
+  },
+
+  {
+    label: 'Lenders',
+    icon: LeadsIcon,
+    to: 'Lenders',
+  },
+  {
+    label: 'Application',
+    icon: LeadsIcon,
+    to: 'Application',
   },
   {
     label: 'Deals',

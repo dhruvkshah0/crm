@@ -50,12 +50,11 @@
         v-model="lead"
       />
     </Tabs>
-    <Resizer class="flex flex-col justify-between border-l" side="right">
+    <div class="flex w-[352px] flex-col justify-between border-l">
       <div
-        class="flex h-10.5 cursor-copy items-center border-b px-5 py-2.5 text-lg font-medium"
-        @click="copyToClipboard(lead.data.name)"
+        class="flex h-10.5 items-center border-b px-5 py-2.5 text-lg font-semibold"
       >
-        {{ __(lead.data.name) }}
+        {{ __('About this Lead') }}
       </div>
       <FileUploader
         @success="(file) => updateField('image', file.file_url)"
@@ -63,11 +62,11 @@
       >
         <template #default="{ openFileSelector, error }">
           <div class="flex items-center justify-start gap-5 border-b p-5">
-            <div class="group relative size-12">
+            <div class="group relative h-[88px] w-[88px]">
               <Avatar
                 size="3xl"
-                class="size-12"
-                :label="lead.data.first_name || __('Untitled')"
+                class="h-[88px] w-[88px]"
+                :label="lead.data.first_name"
                 :image="lead.data.image"
               />
               <component
@@ -95,20 +94,20 @@
                 class="!absolute bottom-0 left-0 right-0"
               >
                 <div
-                  class="z-1 absolute bottom-0.5 left-0 right-0.5 flex h-9 cursor-pointer items-center justify-center rounded-b-full bg-black bg-opacity-40 pt-3 opacity-0 duration-300 ease-in-out group-hover:opacity-100"
+                  class="z-1 absolute bottom-0 left-0 right-0 flex h-13 cursor-pointer items-center justify-center rounded-b-full bg-black bg-opacity-40 pt-3 opacity-0 duration-300 ease-in-out group-hover:opacity-100"
                   style="
                     -webkit-clip-path: inset(12px 0 0 0);
                     clip-path: inset(12px 0 0 0);
                   "
                 >
-                  <CameraIcon class="size-4 cursor-pointer text-white" />
+                  <CameraIcon class="h-6 w-6 cursor-pointer text-white" />
                 </div>
               </component>
             </div>
             <div class="flex flex-col gap-2.5 truncate">
-              <Tooltip :text="lead.data.lead_name || __('Set first name')">
+              <Tooltip :text="lead.data.lead_name">
                 <div class="truncate text-2xl font-medium">
-                  {{ lead.data.lead_name || __('Untitled') }}
+                  {{ lead.data.lead_name }}
                 </div>
               </Tooltip>
               <div class="flex gap-1.5">
@@ -181,7 +180,7 @@
           </div>
         </div>
       </div>
-    </Resizer>
+    </div>
   </div>
   <AssignmentModal
     v-if="lead.data"
@@ -257,7 +256,6 @@
   </Dialog>
 </template>
 <script setup>
-import Resizer from '@/components/Resizer.vue'
 import ActivityIcon from '@/components/Icons/ActivityIcon.vue'
 import EmailIcon from '@/components/Icons/EmailIcon.vue'
 import PhoneIcon from '@/components/Icons/PhoneIcon.vue'
@@ -284,7 +282,6 @@ import {
   setupAssignees,
   setupCustomActions,
   errorMessage,
-  copyToClipboard,
 } from '@/utils'
 import { globalStore } from '@/stores/global'
 import { contactsStore } from '@/stores/contacts'
@@ -396,7 +393,7 @@ function validateRequired(fieldname, value) {
 const breadcrumbs = computed(() => {
   let items = [{ label: __('Leads'), route: { name: 'Leads' } }]
   items.push({
-    label: lead.data.lead_name || __('Untitled'),
+    label: lead.data.lead_name,
     route: { name: 'Lead', params: { leadId: lead.data.name } },
   })
   return items

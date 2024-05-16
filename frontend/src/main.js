@@ -19,6 +19,8 @@ import {
   frappeRequest,
   FeatherIcon,
 } from 'frappe-ui'
+
+import vuetify from './vuetify'
 import translationPlugin from './translation'
 import { createDialog } from './utils/dialogs'
 import { initSocket } from './socket'
@@ -44,6 +46,7 @@ setConfig('resourceFetcher', frappeRequest)
 app.use(FrappeUI)
 app.use(pinia)
 app.use(router)
+app.use(vuetify)
 app.use(translationPlugin)
 for (let key in globalComponents) {
   app.component(key, globalComponents[key])

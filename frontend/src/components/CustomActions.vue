@@ -9,7 +9,11 @@
     </template>
   </Button>
   <Dropdown v-if="groupedActions.length" :options="groupedActions">
-    <Button icon="more-horizontal" />
+    <Button>
+      <template #icon>
+        <FeatherIcon name="more-horizontal" class="h-4 w-4" />
+      </template>
+    </Button>
   </Dropdown>
 </template>
 

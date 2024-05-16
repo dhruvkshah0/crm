@@ -8,11 +8,7 @@
         v-if="leadsListView?.customListActions"
         :actions="leadsListView.customListActions"
       />
-      <Button
-        variant="solid"
-        :label="__('Create')"
-        @click="showLeadModal = true"
-      >
+      <Button variant="solid" :label="__('Add CRM Lead')" @click="showLeadModal = true">
         <template #prefix><FeatherIcon name="plus" class="h-4" /></template>
       </Button>
     </template>
@@ -45,166 +41,156 @@
     @applyFilter="(data) => viewControls.applyFilter(data)"
   />
   <div v-else-if="leads.data" class="flex h-full items-center justify-center">
-    <div
-      class="flex flex-col items-center gap-3 text-xl font-medium text-gray-500"
-    >
+    <div class="flex flex-col items-center gap-3 text-xl font-medium text-gray-500">
       <LeadsIcon class="h-10 w-10" />
-      <span>{{ __('No {0} Found', [__('Leads')]) }}</span>
+      <span>{{ __("No Leads Found") }}</span>
       <Button :label="__('Create')" @click="showLeadModal = true">
         <template #prefix><FeatherIcon name="plus" class="h-4" /></template>
       </Button>
     </div>
   </div>
-  <LeadModal v-model="showLeadModal" />
+  <MerchantModal v-model="showLeadModal" />
 </template>
 
 <script setup>
-import CustomActions from '@/components/CustomActions.vue'
-import LeadsIcon from '@/components/Icons/LeadsIcon.vue'
-import LayoutHeader from '@/components/LayoutHeader.vue'
-import LeadsListView from '@/components/ListViews/LeadsListView.vue'
-import LeadModal from '@/components/Modals/LeadModal.vue'
-import ViewControls from '@/components/ViewControls.vue'
-import { usersStore } from '@/stores/users'
-import { organizationsStore } from '@/stores/organizations'
-import { statusesStore } from '@/stores/statuses'
-import {
-  dateFormat,
-  dateTooltipFormat,
-  timeAgo,
-  formatTime,
-  createToast,
-} from '@/utils'
-import { createResource, Breadcrumbs } from 'frappe-ui'
-import { useRouter } from 'vue-router'
-import { ref, computed, reactive } from 'vue'
+import CustomActions from "@/components/CustomActions.vue";
+import LeadsIcon from "@/components/Icons/LeadsIcon.vue";
+import LayoutHeader from "@/components/LayoutHeader.vue";
+import LeadsListView from "@/components/ListViews/LeadsListView.vue";
+import MerchantModal from "@/components/Modals/MerchantModal.vue";
+import ViewControls from "@/components/ViewControls.vue";
+import { usersStore } from "@/stores/users";
+import { organizationsStore } from "@/stores/organizations";
+import { statusesStore } from "@/stores/statuses";
+import { dateFormat, dateTooltipFormat, timeAgo, formatTime, createToast } from "@/utils";
+import { createResource, Breadcrumbs } from "frappe-ui";
+import { useRouter } from "vue-router";
+import { ref, computed, reactive } from "vue";
 
-const breadcrumbs = [{ label: __('Leads'), route: { name: 'Leads' } }]
+const breadcrumbs = [{ label: __("Leads"), route: { name: "Leads" } }];
 
-const { getUser } = usersStore()
-const { getOrganization } = organizationsStore()
-const { getLeadStatus } = statusesStore()
+const { getUser } = usersStore();
+const { getOrganization } = organizationsStore();
+const { getLeadStatus } = statusesStore();
 
-const router = useRouter()
+const router = useRouter();
 
-const leadsListView = ref(null)
-const showLeadModal = ref(false)
+const leadsListView = ref(null);
+const showLeadModal = ref(false);
 
 // leads data is loaded in the ViewControls component
-const leads = ref({})
-const loadMore = ref(1)
-const triggerResize = ref(1)
-const updatedPageCount = ref(20)
-const viewControls = ref(null)
+const leads = ref({});
+const loadMore = ref(1);
+const triggerResize = ref(1);
+const updatedPageCount = ref(20);
+const viewControls = ref(null);
 
 // Rows
 const rows = computed(() => {
-  if (!leads.value?.data?.data) return []
+  if (!leads.value?.data?.data) return [];
   return leads.value?.data.data.map((lead) => {
-    let _rows = {}
+    let _rows = {};
     leads.value?.data.rows.forEach((row) => {
-      _rows[row] = lead[row]
+      _rows[row] = lead[row];
 
-      if (row == 'lead_name') {
+      if (row == "lead_name") {
         _rows[row] = {
           label: lead.lead_name,
           image: lead.image,
           image_label: lead.first_name,
-        }
-      } else if (row == 'organization') {
+        };
+      } else if (row == "organization") {
         _rows[row] = {
           label: lead.organization,
           logo: getOrganization(lead.organization)?.organization_logo,
-        }
-      } else if (row == 'status') {
+        };
+      } else if (row == "status") {
         _rows[row] = {
           label: lead.status,
           color: getLeadStatus(lead.status)?.iconColorClass,
-        }
-      } else if (row == 'sla_status') {
-        let value = lead.sla_status
-        let tooltipText = value
+        };
+      } else if (row == "sla_status") {
+        let value = lead.sla_status;
+        let tooltipText = value;
         let color =
-          lead.sla_status == 'Failed'
-            ? 'red'
-            : lead.sla_status == 'Fulfilled'
-            ? 'green'
-            : 'orange'
-        if (value == 'First Response Due') {
-          value = __(timeAgo(lead.response_by))
-          tooltipText = dateFormat(lead.response_by, dateTooltipFormat)
+          lead.sla_status == "Failed"
+            ? "red"
+            : lead.sla_status == "Fulfilled"
+            ? "green"
+            : "orange";
+        if (value == "First Response Due") {
+          value = __(timeAgo(lead.response_by));
+          tooltipText = dateFormat(lead.response_by, dateTooltipFormat);
           if (new Date(lead.response_by) < new Date()) {
-            color = 'red'
+            color = "red";
           }
         }
         _rows[row] = {
           label: tooltipText,
           value: value,
           color: color,
-        }
-      } else if (row == 'lead_owner') {
+        };
+      } else if (row == "lead_owner") {
         _rows[row] = {
           label: lead.lead_owner && getUser(lead.lead_owner).full_name,
           ...(lead.lead_owner && getUser(lead.lead_owner)),
-        }
-      } else if (row == '_assign') {
-        let assignees = JSON.parse(lead._assign) || []
+        };
+      } else if (row == "_assign") {
+        let assignees = JSON.parse(lead._assign) || [];
         if (!assignees.length && lead.lead_owner) {
-          assignees = [lead.lead_owner]
+          assignees = [lead.lead_owner];
         }
         _rows[row] = assignees.map((user) => ({
           name: user,
           image: getUser(user).user_image,
           label: getUser(user).full_name,
-        }))
-      } else if (['modified', 'creation'].includes(row)) {
+        }));
+      } else if (["modified", "creation"].includes(row)) {
         _rows[row] = {
           label: dateFormat(lead[row], dateTooltipFormat),
           timeAgo: __(timeAgo(lead[row])),
-        }
+        };
       } else if (
-        ['first_response_time', 'first_responded_on', 'response_by'].includes(
-          row
-        )
+        ["first_response_time", "first_responded_on", "response_by"].includes(row)
       ) {
-        let field = row == 'response_by' ? 'response_by' : 'first_responded_on'
+        let field = row == "response_by" ? "response_by" : "first_responded_on";
         _rows[row] = {
-          label: lead[field] ? dateFormat(lead[field], dateTooltipFormat) : '',
+          label: lead[field] ? dateFormat(lead[field], dateTooltipFormat) : "",
           timeAgo: lead[row]
-            ? row == 'first_response_time'
+            ? row == "first_response_time"
               ? formatTime(lead[row])
               : __(timeAgo(lead[row]))
-            : '',
-        }
+            : "",
+        };
       }
-    })
-    return _rows
-  })
-})
+    });
+    return _rows;
+  });
+});
 
 let newLead = reactive({
-  salutation: '',
-  first_name: '',
-  last_name: '',
-  lead_name: '',
-  organization: '',
-  status: '',
-  email: '',
-  mobile_no: '',
-  lead_owner: '',
-})
+  salutation: "",
+  first_name: "",
+  last_name: "",
+  lead_name: "",
+  organization: "",
+  status: "",
+  email: "",
+  mobile_no: "",
+  lead_owner: "",
+});
 
 const createLead = createResource({
-  url: 'frappe.client.insert',
+  url: "frappe.client.insert",
   makeParams(values) {
     return {
       doc: {
-        doctype: 'CRM Lead',
+        doctype: "CRM Lead",
         ...values,
       },
-    }
+    };
   },
-})
+});
 
 function createNewLead(close) {
   createLead
@@ -212,23 +198,23 @@ function createNewLead(close) {
       validate() {
         if (!newLead.first_name) {
           createToast({
-            title: __('Error creating lead'),
-            text: __('First name is required'),
-            icon: 'x',
-            iconClasses: 'text-red-600',
-          })
-          return __('First name is required')
+            title: __("Error creating lead"),
+            text: __("First name is required"),
+            icon: "x",
+            iconClasses: "text-red-600",
+          });
+          return __("First name is required");
         }
       },
       onSuccess(data) {
         router.push({
-          name: 'Lead',
+          name: "Lead",
           params: {
             leadId: data.name,
           },
-        })
+        });
       },
     })
-    .then(close)
+    .then(close);
 }
 </script>
